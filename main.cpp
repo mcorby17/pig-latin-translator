@@ -12,13 +12,15 @@ int main() {
 
 	do {
 
-		cout << "Enter a sentence in English: ";
+		cout << "Enter a sentence in English: \n";
 		getline(cin, english);
+		cout << endl;
 		
 		goThroughEnglish(english, pLatin, i);
 
 		cout << "Pig Latin: \n";
 		cout << pLatin << endl;
+		cout << endl;
 		cout << "Enter another sentence? (y/n): ";
 		cin >> yn;
 

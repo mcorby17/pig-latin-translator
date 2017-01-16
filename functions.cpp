@@ -28,27 +28,43 @@ bool isPEQ(char letter) {
 	case '.':
 	case '!':
 	case '?':
+	case ',':
+	case '/':
 		return true;
 	default:
 		return false;
 	}
 }
 
-string getWord(string whole, int &i) {
+string getWord(string whole, int &i, char &punc) {
 	string word;
+	punc = ' ';
 	while (whole[i] != ' ' && whole[i] != '\0' && !isPEQ(whole[i])) {
 		word += whole[i];
 		i++;
 	}
-	/*if (isPEQ(whole[i])) { //If a word ends with punctuation, append it to the end of the word
-		word += whole[i];	 //Want this to only happen after the string gets turned to pig latin... need to make a global var for it later
-	}*/
+	if (isPEQ(whole[i])) { //If a word ends with punctuation, save whatever puctuation it is so it can be appended post-pigLatinify
+		if (whole[i] == '.')
+			punc = '.';
+		else if (whole[i] == '!')
+			punc = '!';
+		else if (whole[i] == '?')
+			punc = '?';
+		else if (whole[i] == ',')
+			punc = ',';
+		else if (whole[i] == '/')
+			punc = '/';
+	}
 	i++;
 	return word;
 }
 
 void appWay(string &word) {
 	word += "way";
+}
+
+void appAy(string &word) {
+	word += "ay";
 }
 
 void rotate(string &word) {
@@ -61,11 +77,17 @@ void rotate(string &word) {
 
 void goThroughEnglish(string english, string &pLatin, int &i) {
 	string word;
+	char punc = ' ';	//Used to keep track of puctuation such as periods, question marks, etc
 	while (i < english.length()) {
-		word = getWord(english, i);
+		word = getWord(english, i, punc);	//punc is passed by reference so it doesn't need to be returned by getWord
 		pigLatinify(word);
+		if (punc != ' ') {
+			word += punc;
+			if(punc != '/')
+				i++;
+		}
 		pLatin += word;
-		if(i != english.length() - 1)
+		if(i != english.length() - 1 && punc != '/')
 			pLatin += " ";
 	}
 }
@@ -82,7 +104,7 @@ void pigLatinify(string &word) {
 		else {
 			while (!isVowel(word[0])) {	//As long as the first letter is not a vowel
 				if (rotations != 0 && word[0] == 'y') {	//And any inner letter is not a 'y'
-					word += "ay";
+					appAy(word);
 					done = true;
 					break;
 				}
@@ -93,7 +115,7 @@ void pigLatinify(string &word) {
 					
 			}
 			if (!done) {	//If a vowel is found and "ay" wasn't previously appended due to a found 'y'
-				word += "ay";
+				appAy(word);
 				done = true;
 			}
 		}
